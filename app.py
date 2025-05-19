@@ -4,6 +4,8 @@ import pydeck as pdk
 import sqlite3
 from datetime import datetime
 from utils.itinerary import get_itinerary, get_city_info
+import plotly.express as px
+import requests
 
 # DB init
 conn = sqlite3.connect("roadtrip.db", check_same_thread=False)
@@ -34,7 +36,7 @@ page = st.sidebar.radio("Vai a:", [
 ])
 
 st.sidebar.markdown("""
-**Date:** 1 - 6 Agosto  
+**Date:** 1 - 6 Agosto   
 **Persone:** 4  
 **Chilometri totali:** ~3170 km  
 **Budget a testa:** 218€
@@ -47,35 +49,16 @@ st.sidebar.markdown("""
 - Spesa cibo: 50€ a testa
 """)
 
+@st.cache_data(ttl=3600)
+def get_weather(lat, lon, api_key):
+    url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric&lang=it"
+    return requests.get(url).json()
+
 # --- Contenuti dinamici ---
-import plotly.express as px
-import requests
-
-
 data = pd.read_json("data/tappe.json")
 itinerary = get_itinerary()
 
-if page == "🗺️ Mappa + Itinerario":
-    st.header("📍 Mappa Itinerario")
-    route_coords = [[9.19, 45.46], [-1.98, 43.32], [-2.17, 43.28], [-2.20, 43.30],
-                    [-2.66, 43.42], [-2.94, 43.26], [-3.45, 43.44], [-3.80, 43.46],
-                    [-5.66, 43.54], [-5.85, 43.36]]
-    st.pydeck_chart(pdk.Deck(
-        map_style='mapbox://styles/mapbox/streets-v12',
-        initial_view_state=pdk.ViewState(latitude=43.0, longitude=-2.5, zoom=6, pitch=0),
-        layers=[
-            pdk.Layer('ScatterplotLayer', data=data, get_position='[lon, lat]', get_color='[200, 30, 0, 160]', get_radius=5000),
-            pdk.Layer('TextLayer', data=data, get_position='[lon, lat]', get_text='name', get_size=16, get_color='[0, 0, 0]', get_angle=0),
-            pdk.Layer("PathLayer", data=[{"path": route_coords}], get_path="path", get_width=4, get_color='[0, 100, 255]', width_min_pixels=2),
-        ]))
-
-    st.header("⏺️ Itinerario Giornaliero")
-    for day in itinerary:
-        with st.expander(f"{day['day']} - {day['route']}"):
-            st.markdown(f"**{day['summary']}**")
-            st.markdown("\n".join(f"- {item}" for item in day['details']))
-
-elif page == "🌍 Cosa vedere":
+if page == "🌍 Cosa vedere":
     st.header("🌍 Cosa Vedere nelle Tappe")
     for i, row in data.iterrows():
         with st.expander(f"{row['name']}"):
@@ -97,14 +80,13 @@ elif page == "🌍 Cosa vedere":
                 for b in beaches:
                     st.markdown(f"- {b}")
             st.markdown(info)
-            img_path = f"images/{row['name'].replace(' ', '_').lower()}.jpg"
+
             try:
-                api_key = "14567dc61172ed444e77f402b6e8ff04"
+                api_key = st.secrets["OPENWEATHERMAP_API_KEY"]
                 if pd.isna(row['lat']) or pd.isna(row['lon']):
                     st.markdown("⚠️ Coordinate mancanti per questa città.")
                 else:
-                    url = f"https://api.openweathermap.org/data/2.5/weather?lat={row['lat']}&lon={row['lon']}&appid={api_key}&units=metric&lang=it"
-                    response = requests.get(url).json()
+                    response = get_weather(row['lat'], row['lon'], api_key)
                     if 'main' in response and 'weather' in response:
                         temp = response['main']['temp']
                         weather = response['weather'][0]['description']
@@ -114,7 +96,28 @@ elif page == "🌍 Cosa vedere":
             except Exception as e:
                 st.markdown(f"❌ Errore nella richiesta meteo: {e}")
 
+            img_path = f"images/{row['name'].replace(' ', '_').lower()}.jpg"
             st.image(img_path, use_container_width=True, caption=f"Vista da {row['name']}")
+
+elif page == "🗺️ Mappa + Itinerario":
+    st.header("📍 Mappa Itinerario")
+    route_coords = [[9.19, 45.46], [-1.98, 43.32], [-2.17, 43.28], [-2.20, 43.30],
+                    [-2.66, 43.42], [-2.94, 43.26], [-3.45, 43.44], [-3.80, 43.46],
+                    [-5.66, 43.54], [-5.85, 43.36]]
+    st.pydeck_chart(pdk.Deck(
+        map_style='mapbox://styles/mapbox/streets-v12',
+        initial_view_state=pdk.ViewState(latitude=43.0, longitude=-2.5, zoom=6, pitch=0),
+        layers=[
+            pdk.Layer('ScatterplotLayer', data=data, get_position='[lon, lat]', get_color='[200, 30, 0, 160]', get_radius=5000),
+            pdk.Layer('TextLayer', data=data, get_position='[lon, lat]', get_text='name', get_size=16, get_color='[0, 0, 0]', get_angle=0),
+            pdk.Layer("PathLayer", data=[{"path": route_coords}], get_path="path", get_width=4, get_color='[0, 100, 255]', width_min_pixels=2),
+        ]))
+
+    st.header("⏺️ Itinerario Giornaliero")
+    for day in itinerary:
+        with st.expander(f"{day['day']} - {day['route']}"):
+            st.markdown(f"**{day['summary']}**")
+            st.markdown("".join(f"- {item}" for item in day['details']))
 
 elif page == "💰 Budget Tracker":
     st.header("💰 Budget Tracker")
@@ -166,7 +169,6 @@ elif page == "💰 Budget Tracker":
             st.warning(f"{p} deve versare {-diff:.2f}€")
         else:
             st.info(f"{p} è in pari")
-
 
     fig = px.pie(values=total.values, names=total.index, title="Distribuzione Spese per Persona")
     st.plotly_chart(fig, use_container_width=True)
