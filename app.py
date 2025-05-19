@@ -15,10 +15,9 @@ st.sidebar.markdown("""
 **Budget a testa:** 388€
 
 **Dettagli Costi:**
-- Camper: 907€
-- Camper a capa: 226€                    
+- Camper: 907€ a capa                    
 - Cauzione: 500€ 
-- Assicurazione: 42€ cad (168€ totali)
+- Assicurazione: 42€ a capa (168€ totali)
 - Benzina stimata: 70€ a capa
 - Spesa cibo: 50€ a capa
 """)
