@@ -1,0 +1,11 @@
+[
+  { "name": "San Sebastián", "lat": 43.3183, "lon": -1.9812 },
+  { "name": "Zarautz", "lat": 43.2843, "lon": -2.1699 },
+  { "name": "Getaria", "lat": 43.3030, "lon": -2.2030 },
+  { "name": "Laga Beach", "lat": 43.4256, "lon": -2.6663 },
+  { "name": "Bilbao", "lat": 43.2630, "lon": -2.9350 },
+  { "name": "Santoña", "lat": 43.4431, "lon": -3.4571 },
+  { "name": "Santander", "lat": 43.4623, "lon": -3.8099 },
+  { "name": "Gijón", "lat": 43.5453, "lon": -5.6615 },
+  { "name": "Oviedo", "lat": 43.3619, "lon": -5.8494 }
+]
