@@ -12,14 +12,15 @@ st.sidebar.markdown("""
 **Date:** 1 - 6 Agosto  
 **Persone:** 4  
 **Chilometri totali:** ~3170 km  
-**Budget a testa:** 218€
+**Budget a testa:** 388€
 
 **Dettagli Costi:**
-- Camper: 225€
-- Cauzione: 500€ (rimborsabile)
-- Assicurazione: 42€ a testa (168€ totali)
-- Benzina stimata: 70€ a testa
-- Spesa cibo: 50€ a testa
+- Camper: 907€
+- Camper a capa: 226€                    
+- Cauzione: 500€ 
+- Assicurazione: 42€ cad (168€ totali)
+- Benzina stimata: 70€ a capa
+- Spesa cibo: 50€ a capa
 """)
 
 # --- MAPPA INTERATTIVA ---
@@ -34,7 +35,7 @@ route_coords = [
     [-2.20, 43.30],  # Getaria
     [-2.66, 43.42],  # Laga
     [-2.94, 43.26],  # Bilbao
-    [-3.45, 43.44],  # Santoña
+    [-3.45, 43.44],  # Santonaa
     [-3.80, 43.46],  # Santander
     [-5.66, 43.54],  # Gijón
     [-5.85, 43.36],  # Oviedo
