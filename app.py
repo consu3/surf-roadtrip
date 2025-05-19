@@ -99,7 +99,7 @@ elif page == "🌍 Cosa vedere":
             st.markdown(info)
             img_path = f"images/{row['name'].replace(' ', '_').lower()}.jpg"
             try:
-                api_key = "18b54271e20e2bf1623ceb0467daaa33"
+                api_key = "6c7009ff0c6f6c3c2578a78b52b60b9c"
                 if pd.isna(row['lat']) or pd.isna(row['lon']):
                     st.markdown("⚠️ Coordinate mancanti per questa città.")
                 else:
