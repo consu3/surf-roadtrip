@@ -12,10 +12,10 @@ st.sidebar.markdown("""
 **Date:** 1 - 6 Agosto  
 **Persone:** 4  
 **Chilometri totali:** ~3170 km  
-**Budget a testa:** 388€
+**Budget a testa:** 388€ 
 
 **Dettagli Costi:**
-- Camper: 907€ a capa                    
+- Camper: 907€                    
 - Cauzione: 500€ 
 - Assicurazione: 42€ a capa (168€ totali)
 - Benzina stimata: 70€ a capa
